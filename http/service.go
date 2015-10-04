@@ -46,7 +46,7 @@ func (s *Service) Start() error {
 	go func() {
 		err := server.Serve(s.ln)
 		if err != nil {
-			log.Fatalf("HTTP serve:", err)
+			log.Fatalf("HTTP serve: %s", err)
 		}
 	}()
 
