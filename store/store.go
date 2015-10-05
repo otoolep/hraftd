@@ -121,9 +121,8 @@ type fsm Store
 func (f *fsm) Apply(l *raft.Log) interface{} {
 	var c command
 	if err := json.Unmarshal(l.Data, &c); err != nil {
-		panic(fmt.Sprintf("failed to unmarshal command: %s", err.Error))
+		panic(fmt.Sprintf("failed to unmarshal command: %s", err.Error()))
 	}
-	return nil
 
 	switch c.Op {
 	case "set":
