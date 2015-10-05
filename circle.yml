@@ -1,7 +1,3 @@
-dependencies:
-    pre:
-        - go get -u golang.org/x/tools/cmd/vet;
-
 test:
     override:
         - go tool vet .
