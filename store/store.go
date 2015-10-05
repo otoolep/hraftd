@@ -6,6 +6,7 @@ import (
 	"io"
 	"net"
 	"os"
+	"path/filepath"
 	"sync"
 	"time"
 
@@ -25,13 +26,16 @@ type command struct {
 }
 
 type Store struct {
+	RaftDir  string
+	RaftBind string
+
 	mu sync.Mutex
 	m  map[string]string // The key-value store for the system.
 
 	raft *raft.Raft // The consensus mechanism
 }
 
-func NewStore() *Store {
+func New() *Store {
 	return &Store{
 		m: make(map[string]string),
 	}
@@ -46,26 +50,26 @@ func (s *Store) Open() error {
 	config.DisableBootstrapAfterElect = false
 
 	// Setup Raft communication.
-	addr, err := net.ResolveTCPAddr("tcp", "127.0.0.1:8088")
+	addr, err := net.ResolveTCPAddr("tcp", s.RaftBind)
 	if err != nil {
 		return err
 	}
-	transport, err := raft.NewTCPTransport(":8088", addr, 3, 10*time.Second, os.Stderr)
+	transport, err := raft.NewTCPTransport(s.RaftBind, addr, 3, 10*time.Second, os.Stderr)
 	if err != nil {
 		return err
 	}
 
 	// Create peer storage.
-	peerStore := raft.NewJSONPeers("/tmp/raft/json", transport)
+	peerStore := raft.NewJSONPeers(filepath.Join(s.RaftDir, "peers.json"), transport)
 
 	// Create the log store and stable store.
-	logStore, err := raftboltdb.NewBoltStore("/tmp/raft/raft.db")
+	logStore, err := raftboltdb.NewBoltStore(filepath.Join(s.RaftDir, "raft.db"))
 	if err != nil {
 		return fmt.Errorf("new bolt store: %s", err)
 	}
 
 	// Create the snapshot store.
-	snapshots, err := raft.NewFileSnapshotStore("/tmp/raft", retainSnapshotCount, os.Stderr)
+	snapshots, err := raft.NewFileSnapshotStore(s.RaftDir, retainSnapshotCount, os.Stderr)
 	if err != nil {
 		return fmt.Errorf("file snapshot store: %s", err)
 	}
