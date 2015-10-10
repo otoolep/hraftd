@@ -1,24 +1,21 @@
 package main
 
 import (
+	"bytes"
+	"encoding/json"
 	"flag"
 	"fmt"
 	"log"
+	"net/http"
 	"os"
 
 	"github.com/otoolep/hraftd/http"
 	"github.com/otoolep/hraftd/store"
 )
 
-// Program parameters
-var httpAddr string
-var raftAddr string
-var joinAddr string
-var raftDir string
-
 const (
 	DefaultHTTPAddr = ":11000"
-	DefaultRaftAddr = ":11001"
+	DefaultRaftAddr = ":12000"
 )
 
 // Flag set
@@ -45,7 +42,7 @@ func main() {
 	s := store.New()
 	s.RaftDir = *raftDir
 	s.RaftBind = *raftAddr
-	if err := s.Open(); err != nil {
+	if err := s.Open(*joinAddr == ""); err != nil {
 		log.Fatalf("failed to open store: %s", err.Error())
 	}
 
@@ -54,7 +51,28 @@ func main() {
 		log.Fatalf("failed to start HTTP service: %s", err.Error())
 	}
 
+	// If join was specified, make the join request.
+	if *joinAddr != "" {
+		if err := join(*joinAddr, *raftAddr); err != nil {
+			log.Fatalf("failed to join node at %s: %s", *joinAddr, err.Error())
+		}
+	}
+
 	log.Println("hraft started successfully")
 
 	select {}
+}
+
+func join(joinAddr, raftAddr string) error {
+	b, err := json.Marshal(map[string]string{"addr": raftAddr})
+	if err != nil {
+		return err
+	}
+	resp, err := http.Post(fmt.Sprintf("http://%s/join", joinAddr), "application-type/json", bytes.NewReader(b))
+	if err != nil {
+		return err
+	}
+	defer resp.Body.Close()
+
+	return nil
 }

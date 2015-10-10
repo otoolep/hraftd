@@ -45,13 +45,15 @@ func New() *Store {
 	}
 }
 
-func (s *Store) Open() error {
+func (s *Store) Open(enableSingle bool) error {
 	// Setup Raft configuration.
 	config := raft.DefaultConfig()
 
-	// Experiment with single-node to start.
-	config.EnableSingleNode = true
-	config.DisableBootstrapAfterElect = false
+	if enableSingle {
+		// Experiment with single-node to start.
+		config.EnableSingleNode = true
+		config.DisableBootstrapAfterElect = false
+	}
 
 	// Setup Raft communication.
 	addr, err := net.ResolveTCPAddr("tcp", s.RaftBind)
