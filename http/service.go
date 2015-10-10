@@ -1,3 +1,5 @@
+// Package httpd provides the HTTP server for accessing the distributed key-value store
+// It also allows other nodes to join an existing cluster.
 package httpd
 
 import (

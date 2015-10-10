@@ -1,3 +1,6 @@
+// Package store provides a simple key-value store. The keys and associated values
+// are changed via distributed consensus, meaning that the values are changed only
+// when a majority of nodes agree on the new value.
 package store
 
 import (
