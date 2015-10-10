@@ -25,7 +25,7 @@ type Store interface {
 	Join(addr string) error
 }
 
-// Service is the type providing HTTP service.
+// Service provides HTTP service.
 type Service struct {
 	addr string
 	ln   net.Listener

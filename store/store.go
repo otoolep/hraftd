@@ -26,7 +26,7 @@ type command struct {
 	Value string `json:"value,omitempty"`
 }
 
-// Store is a simply key-value store, where all changes are made via Raft consensus.
+// Store is a simple key-value store, where all changes are made via Raft consensus.
 type Store struct {
 	RaftDir  string
 	RaftBind string
@@ -47,7 +47,7 @@ func New() *Store {
 	}
 }
 
-// Open opens the store. If enableSingle is set, then this become the first node,
+// Open opens the store. If enableSingle is set, then this node become the first node,
 // and therefore leader, of the cluster.
 func (s *Store) Open(enableSingle bool) error {
 	// Setup Raft configuration.
@@ -129,7 +129,7 @@ func (s *Store) Delete(key string) error {
 	return nil
 }
 
-// Join joins a node at locate at addr to the cluster. The node must be ready to
+// Join joins a node, located at addr, to this store. The node must be ready to
 // respond to Raft communications at that address.
 func (s *Store) Join(addr string) error {
 	s.logger.Printf("received join request for remote node as %s", addr)
