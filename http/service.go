@@ -17,7 +17,7 @@ type Store interface {
 	// Set sets the value for the given key, via distributed consensus.
 	Set(key, value string) error
 
-	// Delete removes the give key, via distributed consensus.
+	// Delete removes the given key, via distributed consensus.
 	Delete(key string) error
 
 	// Join joins the node, reachable at addr, to the cluster.
