@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"log"
 	"net"
 	"os"
 	"path/filepath"
@@ -33,11 +34,14 @@ type Store struct {
 	m  map[string]string // The key-value store for the system.
 
 	raft *raft.Raft // The consensus mechanism
+
+	logger *log.Logger
 }
 
 func New() *Store {
 	return &Store{
-		m: make(map[string]string),
+		m:      make(map[string]string),
+		logger: log.New(os.Stderr, "[store] ", log.LstdFlags),
 	}
 }
 
@@ -113,6 +117,17 @@ func (s *Store) Set(key, value string) error {
 }
 
 func (s *Store) Delete(key string) error {
+	return nil
+}
+
+func (s *Store) Join(addr string) error {
+	s.logger.Printf("received join request for remote node as %s", addr)
+
+	f := s.raft.AddPeer(addr)
+	if f.Error() != nil {
+		return f.Error()
+	}
+	s.logger.Printf("node at %s joined successfully", addr)
 	return nil
 }
 

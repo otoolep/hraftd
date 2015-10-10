@@ -81,6 +81,10 @@ func (t *testStore) Delete(key string) error {
 	return nil
 }
 
+func (t *testStore) Join(addr string) error {
+	return nil
+}
+
 func doGet(t *testing.T, url, key string) string {
 	resp, err := http.Get(fmt.Sprintf("%s/key/%s", url, key))
 	if err != nil {

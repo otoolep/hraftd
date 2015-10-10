@@ -11,9 +11,17 @@ import (
 )
 
 type Store interface {
+	// Get returns the value for the given key.
 	Get(key string) (string, error)
+
+	// Set sets the value for the given key, via distributed consensus.
 	Set(key, value string) error
+
+	// Delete removes the give key, via distributed consensus.
 	Delete(key string) error
+
+	// Join joins the node, reachable at addr, to the cluster.
+	Join(addr string) error
 }
 
 type Service struct {
@@ -41,7 +49,7 @@ func (s *Service) Start() error {
 	}
 	s.ln = ln
 
-	http.Handle("/key", s)
+	http.Handle("/", s)
 
 	go func() {
 		err := server.Serve(s.ln)
@@ -59,6 +67,45 @@ func (s *Service) Close() {
 }
 
 func (s *Service) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	if strings.HasPrefix(r.URL.Path, "/key") {
+		s.handleKeyRequest(w, r)
+	} else if r.URL.Path == "/join" {
+		s.handleJoin(w, r)
+	} else {
+		w.WriteHeader(http.StatusNotFound)
+	}
+}
+
+func (s *Service) handleJoin(w http.ResponseWriter, r *http.Request) {
+	b, err := ioutil.ReadAll(r.Body)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+	m := map[string]string{}
+	if err := json.Unmarshal(b, &m); err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	if len(m) != 1 {
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	remoteAddr, ok := m["addr"]
+	if !ok {
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	if err := s.store.Join(remoteAddr); err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+}
+
+func (s *Service) handleKeyRequest(w http.ResponseWriter, r *http.Request) {
 	getKey := func() string {
 		parts := strings.Split(r.URL.Path, "/")
 		if len(parts) != 3 {
