@@ -26,6 +26,7 @@ type command struct {
 	Value string `json:"value,omitempty"`
 }
 
+// Store is a simply key-value store, where all changes are made via Raft consensus.
 type Store struct {
 	RaftDir  string
 	RaftBind string
@@ -38,6 +39,7 @@ type Store struct {
 	logger *log.Logger
 }
 
+// New returns a new Store.
 func New() *Store {
 	return &Store{
 		m:      make(map[string]string),
@@ -45,6 +47,8 @@ func New() *Store {
 	}
 }
 
+// Open opens the store. If enableSingle is set, then this become the first node,
+// and therefore leader, of the cluster.
 func (s *Store) Open(enableSingle bool) error {
 	// Setup Raft configuration.
 	config := raft.DefaultConfig()
@@ -89,12 +93,14 @@ func (s *Store) Open(enableSingle bool) error {
 	return nil
 }
 
+// Get returns the value for the given key.
 func (s *Store) Get(key string) (string, error) {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 	return s.m[key], nil
 }
 
+// Set sets the value for the given key.
 func (s *Store) Set(key, value string) error {
 	if s.raft.State() != raft.Leader {
 		return fmt.Errorf("not leader")
@@ -118,10 +124,13 @@ func (s *Store) Set(key, value string) error {
 	return nil
 }
 
+// Delete deletes the given key.
 func (s *Store) Delete(key string) error {
 	return nil
 }
 
+// Join joins a node at locate at addr to the cluster. The node must be ready to
+// respond to Raft communications at that address.
 func (s *Store) Join(addr string) error {
 	s.logger.Printf("received join request for remote node as %s", addr)
 
@@ -135,6 +144,7 @@ func (s *Store) Join(addr string) error {
 
 type fsm Store
 
+// Apply applies a Raft log entry to the key-value store.
 func (f *fsm) Apply(l *raft.Log) interface{} {
 	var c command
 	if err := json.Unmarshal(l.Data, &c); err != nil {
@@ -151,10 +161,12 @@ func (f *fsm) Apply(l *raft.Log) interface{} {
 	}
 }
 
+// Snapshot returns a snapshot of the key-value store.
 func (f *fsm) Snapshot() (raft.FSMSnapshot, error) {
 	return nil, nil
 }
 
+// Restore stores the key-value store to a previous state.
 func (f *fsm) Restore(rc io.ReadCloser) error {
 	return nil
 }

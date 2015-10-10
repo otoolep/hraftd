@@ -10,6 +10,7 @@ import (
 	"strings"
 )
 
+// Store is the interface Raft-backed key-value stores must implement.
 type Store interface {
 	// Get returns the value for the given key.
 	Get(key string) (string, error)
@@ -24,6 +25,7 @@ type Store interface {
 	Join(addr string) error
 }
 
+// Service is the type providing HTTP service.
 type Service struct {
 	addr string
 	ln   net.Listener
@@ -31,6 +33,7 @@ type Service struct {
 	store Store
 }
 
+// New returns an uninitialized HTTP service.
 func New(addr string, store Store) *Service {
 	return &Service{
 		addr:  addr,
@@ -38,6 +41,7 @@ func New(addr string, store Store) *Service {
 	}
 }
 
+// Start starts the service.
 func (s *Service) Start() error {
 	server := http.Server{
 		Handler: s,
@@ -61,11 +65,13 @@ func (s *Service) Start() error {
 	return nil
 }
 
+// Close closes the service.
 func (s *Service) Close() {
 	s.ln.Close()
 	return
 }
 
+// ServeHTTP allows Service to serve HTTP requests.
 func (s *Service) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	if strings.HasPrefix(r.URL.Path, "/key") {
 		s.handleKeyRequest(w, r)
@@ -170,6 +176,7 @@ func (s *Service) handleKeyRequest(w http.ResponseWriter, r *http.Request) {
 	return
 }
 
+// Addr returns the address on which the Service is listening
 func (s *Service) Addr() net.Addr {
 	return s.ln.Addr()
 }
