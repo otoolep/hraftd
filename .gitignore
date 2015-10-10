@@ -2,6 +2,10 @@
 *.o
 *.a
 *.so
+# executables
+
+hraftd
+**/hraftd
 
 # Folders
 _obj
