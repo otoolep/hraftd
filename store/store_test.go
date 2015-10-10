@@ -17,7 +17,7 @@ func Test_StoreOpen(t *testing.T) {
 		t.Fatalf("failed to create store")
 	}
 
-	if err := s.Open(); err != nil {
+	if err := s.Open(false); err != nil {
 		t.Fatalf("failed to open store: %s", err)
 	}
 }
