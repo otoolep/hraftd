@@ -7,9 +7,11 @@
 package store
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
 	"io"
+	"io/ioutil"
 	"log"
 	"net"
 	"os"
@@ -53,14 +55,20 @@ func New() *Store {
 	}
 }
 
-// Open opens the store. If enableSingle is set, then this node become the first node,
-// and therefore leader, of the cluster.
+// Open opens the store. If enableSingle is set, and there are no existing peers,
+// then this node becomesthe first node, and therefore leader, of the cluster.
 func (s *Store) Open(enableSingle bool) error {
 	// Setup Raft configuration.
 	config := raft.DefaultConfig()
 
-	if enableSingle {
-		// Experiment with single-node to start.
+	// Check for any existing peers.
+	peers, err := readPeersJSON(filepath.Join(s.RaftDir, "peers.json"))
+	if err != nil {
+		return err
+	}
+
+	if enableSingle && len(peers) <= 1 {
+		s.logger.Println("enabling single-node mode")
 		config.EnableSingleNode = true
 		config.DisableBootstrapAfterElect = false
 	}
@@ -76,7 +84,7 @@ func (s *Store) Open(enableSingle bool) error {
 	}
 
 	// Create peer storage.
-	peerStore := raft.NewJSONPeers(filepath.Join(s.RaftDir, "peers.json"), transport)
+	peerStore := raft.NewJSONPeers(s.RaftDir, transport)
 
 	// Create the log store and stable store.
 	logStore, err := raftboltdb.NewBoltStore(filepath.Join(s.RaftDir, "raft.db"))
@@ -189,4 +197,23 @@ func (f *fsm) applyDelete(key string) interface{} {
 	defer f.mu.Unlock()
 	delete(f.m, key)
 	return nil
+}
+
+func readPeersJSON(path string) ([]string, error) {
+	b, err := ioutil.ReadFile(path)
+	if err != nil && !os.IsNotExist(err) {
+		return nil, err
+	}
+
+	if len(b) == 0 {
+		return nil, nil
+	}
+
+	var peers []string
+	dec := json.NewDecoder(bytes.NewReader(b))
+	if err := dec.Decode(&peers); err != nil {
+		return nil, err
+	}
+
+	return peers, nil
 }
