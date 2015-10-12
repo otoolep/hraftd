@@ -13,6 +13,8 @@ You can read the value for a key like so:
 
 `curl -XGET localhost:11002/key/foo`
 
+A simple system like hraftd makes it easy to study Raft in general, and Hashicorp's implementation in particular.
+
 ## Running hraftd
 Starting and running a hraftd cluster is easy. Download hraftd like so:
 
