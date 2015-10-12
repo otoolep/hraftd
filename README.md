@@ -5,11 +5,11 @@ hraftd is a reference use of the Hashicorp Raft implementation, inspired by [raf
 
 Like raftd, the implementation is a very simple key-value store. You can set a key like so:
 
-`curl -v -XPOST localhost:11000/key -d '{"foo": "bar"}'`
+`curl -XPOST localhost:11000/key -d '{"foo": "bar"}'`
 
 You can read the value for a key like so:
 
-`curl -v -XGET localhost:11002/key/foo`
+`curl -XGET localhost:11002/key/foo`
 
 ## Running hraftd
 Starting and running a hraftd cluster is easy. Download hraftd like so:
@@ -27,7 +27,7 @@ Run your first hraftd like so:
 
 You can now set a key:
 
-`curl -v -XPOST localhost:11000/key -d '{"user1": "batman"}'`
+`curl -XPOST localhost:11000/key -d '{"user1": "batman"}'`
 
 ### Bring up a cluster
 Let's bring up 2 more nodes, so we have a 3-node cluster. That way we can tolerate the failure of 1 node:
@@ -40,21 +40,21 @@ $GOPATH/hraftd ~/node0 -haddr 11002 -raddr 12002 -join :11000 ~/node2
 This tells each new node to join the existing node. Once joined, each node now knows about the key:
 
 ```
-curl -v -XGET localhost:11000/key/user1
-curl -v -XGET localhost:11001/key/user1
-curl -v -XGET localhost:11002/key/user1
+curl -XGET localhost:11000/key/user1
+curl -XGET localhost:11001/key/user1
+curl -XGET localhost:11002/key/user1
 ```
 
 Furthermore you add a new key:
 
-`curl -v -XPOST localhost:11000/key -d '{"user2": "robin"}'`
+`curl -XPOST localhost:11000/key -d '{"user2": "robin"}'`
 
 Confirm that the new key has been set like so:
 
 ```
-curl -v -XGET localhost:11000/key/user2
-curl -v -XGET localhost:11001/key/user2
-curl -v -XGET localhost:11002/key/user2
+curl -XGET localhost:11000/key/user2
+curl -XGET localhost:11001/key/user2
+curl -XGET localhost:11002/key/user2
 ```
 
 ### Tolerating failure
