@@ -1,7 +1,7 @@
 hraftd [![Circle CI](https://circleci.com/gh/otoolep/hraftd/tree/master.svg?style=svg)](https://circleci.com/gh/otoolep/hraftd/tree/master) [![GoDoc](https://godoc.org/github.com/otoolep/hraftd?status.png)](https://godoc.org/github.com/otoolep/hraftd)
 ======
 
-hraftd is a reference use of the [Hashicorp Raft implementation](https://github.com/hashicorp/raft), inspired by [raftd](https://github.com/goraft/raftd). Raft is a _distributed consensus protocol_, meaning its purpose is to ensure that a set of nodes -- a cluster -- agree on the state of some arbitrary system, even when nodes are vulnerable to failure and network partitions. It is a fundamental part of building fault-tolerant systems.
+hraftd is a reference use of the [Hashicorp Raft implementation](https://github.com/hashicorp/raft), inspired by [raftd](https://github.com/goraft/raftd). Raft is a _distributed consensus protocol_, meaning its purpose is to ensure that a set of nodes -- a cluster -- agree on the state of some arbitrary system, even when nodes are vulnerable to failure and network partitions. It is a fundamental concept when it comes to building fault-tolerant systems.
 
 Like raftd, the implementation is a very simple key-value store. You can set a key like so:
 
