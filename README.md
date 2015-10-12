@@ -70,4 +70,4 @@ curl -XGET localhost:11002/key/user2
 Kill the leader process and watch one of the other nodes be elected leader. The keys are still available for query on the other nodes, and you can set keys on the new leader. Furthermore when the first node is restarted, it will rejoin the cluster and learn about any updates that occurred while it was down.
 
 ### Leader-forwarding
-Automatically forwarding requests to set keys to the current leader is not implemented. The client must always send requests to change key to the leader or an error will be returned.
+Automatically forwarding requests to set keys to the current leader is not implemented. The client must always send requests to change a key to the leader or an error will be returned.
