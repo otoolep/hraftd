@@ -36,8 +36,8 @@ curl -XGET localhost:11000/key/user1
 Let's bring up 2 more nodes, so we have a 3-node cluster. That way we can tolerate the failure of 1 node:
 
 ```
-$GOPATH/hraftd ~/node0 -haddr 11001 -raddr 12001 -join :11000 ~/node1
-$GOPATH/hraftd ~/node0 -haddr 11002 -raddr 12002 -join :11000 ~/node2
+$GOPATH/hraftd -haddr :11001 -raddr :12001 -join :11000 ~/node1
+$GOPATH/hraftd -haddr :11002 -raddr :12002 -join :11000 ~/node2
 ```
 
 This tells each new node to join the existing node. Once joined, each node now knows about the key:
