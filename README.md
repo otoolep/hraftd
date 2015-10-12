@@ -48,7 +48,7 @@ curl -XGET localhost:11001/key/user1
 curl -XGET localhost:11002/key/user1
 ```
 
-Furthermore you add a new key:
+Furthermore you can add a second key:
 
 `curl -XPOST localhost:11000/key -d '{"user2": "robin"}'`
 
