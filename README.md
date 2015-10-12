@@ -73,4 +73,4 @@ Kill the leader process and watch one of the other nodes be elected leader. The 
 Automatically forwarding requests to set keys to the current leader is not implemented. The client must always send requests to change a key to the leader or an error will be returned.
 
 ## Credits
-Thanks to the authors of [raftd](https://github.com/goraft/raftd) for providing the inspiration for this system.
+Thanks to the authors of [raftd](https://github.com/goraft/raftd) for providing the inspiration for this system. The current use of Raft by [InfluxDB](https://github.com/influxdb/influxdb) was also helpful.
