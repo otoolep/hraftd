@@ -5,6 +5,10 @@ hraftd [![Circle CI](https://circleci.com/gh/otoolep/hraftd/tree/master.svg?styl
 
 hraftd is a reference use of the [Hashicorp Raft implementation](https://github.com/hashicorp/raft), inspired by [raftd](https://github.com/goraft/raftd). Raft is a _distributed consensus protocol_, meaning its purpose is to ensure that a set of nodes -- a cluster -- agree on the state of some arbitrary system, even when nodes are vulnerable to failure and network partitions. It is a fundamental concept when it comes to building fault-tolerant systems.
 
+A simple system like hraftd makes it easy to study Raft in general, and Hashicorp's implementation in particular.
+
+## Reading and Writing Keys
+
 Like raftd, the implementation is a very simple key-value store. You can set a key like so:
 
 `curl -XPOST localhost:11000/key -d '{"foo": "bar"}'`
@@ -12,8 +16,6 @@ Like raftd, the implementation is a very simple key-value store. You can set a k
 You can read the value for a key like so:
 
 `curl -XGET localhost:11002/key/foo`
-
-A simple system like hraftd makes it easy to study Raft in general, and Hashicorp's implementation in particular.
 
 ## Running hraftd
 Starting and running a hraftd cluster is easy. Download hraftd like so:
