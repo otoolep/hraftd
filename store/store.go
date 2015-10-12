@@ -67,6 +67,8 @@ func (s *Store) Open(enableSingle bool) error {
 		return err
 	}
 
+	// Allow the node to entry single-mode, potentially electing itself, if
+	// explicitly enabled and there is only 1 node in the cluster already.
 	if enableSingle && len(peers) <= 1 {
 		s.logger.Println("enabling single-node mode")
 		config.EnableSingleNode = true
@@ -86,19 +88,19 @@ func (s *Store) Open(enableSingle bool) error {
 	// Create peer storage.
 	peerStore := raft.NewJSONPeers(s.RaftDir, transport)
 
+	// Create the snapshot store. This allows the Raft to truncate the log.
+	snapshots, err := raft.NewFileSnapshotStore(s.RaftDir, retainSnapshotCount, os.Stderr)
+	if err != nil {
+		return fmt.Errorf("file snapshot store: %s", err)
+	}
+
 	// Create the log store and stable store.
 	logStore, err := raftboltdb.NewBoltStore(filepath.Join(s.RaftDir, "raft.db"))
 	if err != nil {
 		return fmt.Errorf("new bolt store: %s", err)
 	}
 
-	// Create the snapshot store.
-	snapshots, err := raft.NewFileSnapshotStore(s.RaftDir, retainSnapshotCount, os.Stderr)
-	if err != nil {
-		return fmt.Errorf("file snapshot store: %s", err)
-	}
-
-	// Create raft log.
+	// Instantiate the Raft systems.
 	ra, err := raft.NewRaft(config, (*fsm)(s), logStore, logStore, snapshots, peerStore, transport)
 	if err != nil {
 		return fmt.Errorf("new raft: %s", err)
