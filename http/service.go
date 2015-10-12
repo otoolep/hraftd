@@ -140,7 +140,7 @@ func (s *Service) handleKeyRequest(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		io.WriteString(w, string(b)+"\n")
+		io.WriteString(w, string(b))
 
 	case "POST":
 		// Read the value from the POST body.

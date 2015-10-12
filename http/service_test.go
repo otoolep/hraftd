@@ -23,26 +23,26 @@ func Test_NewServer(t *testing.T) {
 	}
 
 	b := doGet(t, s.URL(), "k1")
-	if string(b) != `{"k1":""}\n` {
+	if string(b) != `{"k1":""}` {
 		t.Fatalf("wrong value received for key k1: %s", string(b))
 	}
 
 	doPost(t, s.URL(), "k1", "v1")
 
 	b = doGet(t, s.URL(), "k1")
-	if string(b) != `{"k1":"v1"}\n` {
+	if string(b) != `{"k1":"v1"}` {
 		t.Fatalf("wrong value received for key k1: %s", string(b))
 	}
 
 	store.m["k2"] = "v2"
 	b = doGet(t, s.URL(), "k2")
-	if string(b) != `{"k2":"v2"}\n` {
+	if string(b) != `{"k2":"v2"}` {
 		t.Fatalf("wrong value received for key k2: %s", string(b))
 	}
 
 	doDelete(t, s.URL(), "k2")
 	b = doGet(t, s.URL(), "k2")
-	if string(b) != `{"k2":""}\n` {
+	if string(b) != `{"k2":""}` {
 		t.Fatalf("wrong value received for key k2: %s", string(b))
 	}
 
