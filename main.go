@@ -18,43 +18,53 @@ const (
 	DefaultRaftAddr = ":12000"
 )
 
-// Flag set
-var fs *flag.FlagSet
+// Parameters
+var httpAddr string
+var raftAddr string
+var joinAddr string
+
+func init() {
+	flag.StringVar(&httpAddr, "haddr", DefaultHTTPAddr, "Set the HTTP bind address")
+	flag.StringVar(&raftAddr, "raddr", DefaultRaftAddr, "Set Raft bind address")
+	flag.StringVar(&joinAddr, "join", "", "Set join address, if any")
+	flag.Usage = func() {
+		fmt.Fprintf(os.Stderr, "Usage: %s [options] <raft-data-path> \n", os.Args[0])
+		flag.PrintDefaults()
+	}
+}
 
 func main() {
-	fs = flag.NewFlagSet("", flag.ExitOnError)
-	var (
-		httpAddr = fs.String("haddr", DefaultHTTPAddr, "Set HTTP bind address")
-		raftAddr = fs.String("raddr", DefaultRaftAddr, "Set Raft bind address")
-		joinAddr = fs.String("join", "", "Set join address, if any")
-		raftDir  = fs.String("rdir", "", "Set storage path for Raft")
-	)
-	_ = joinAddr
-	fs.Parse(os.Args[1:])
+	flag.Parse()
 
-	// Ensure Raft storage exists.
-	if *raftDir == "" {
+	if flag.NArg() == 0 {
 		fmt.Fprintf(os.Stderr, "No Raft storage directory specified\n")
 		os.Exit(1)
 	}
-	os.MkdirAll(*raftDir, 0700)
+
+	// Ensure Raft storage exists.
+	raftDir := flag.Arg(0)
+	if raftDir == "" {
+		fmt.Fprintf(os.Stderr, "No Raft storage directory specified\n")
+		os.Exit(1)
+	}
+	os.MkdirAll(raftDir, 0700)
 
 	s := store.New()
-	s.RaftDir = *raftDir
-	s.RaftBind = *raftAddr
-	if err := s.Open(*joinAddr == ""); err != nil {
+	s.RaftDir = raftDir
+	s.RaftBind = raftAddr
+	if err := s.Open(joinAddr == ""); err != nil {
 		log.Fatalf("failed to open store: %s", err.Error())
 	}
 
-	h := httpd.New(*httpAddr, s)
+	h := httpd.New(httpAddr, s)
 	if err := h.Start(); err != nil {
 		log.Fatalf("failed to start HTTP service: %s", err.Error())
 	}
 
 	// If join was specified, make the join request.
-	if *joinAddr != "" {
-		if err := join(*joinAddr, *raftAddr); err != nil {
-			log.Fatalf("failed to join node at %s: %s", *joinAddr, err.Error())
+	if joinAddr != "" {
+		if err := join(joinAddr, raftAddr); err != nil {
+			log.Fatalf("failed to join node at %s: %s", joinAddr, err.Error())
 		}
 	}
 
