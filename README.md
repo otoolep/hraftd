@@ -15,7 +15,7 @@ Like raftd, the implementation is a very simple key-value store. You can set a k
 
 You can read the value for a key like so:
 
-`curl -XGET localhost:11002/key/foo`
+`curl -XGET localhost:11000/key/foo`
 
 ## Running hraftd
 Starting and running a hraftd cluster is easy. Download hraftd like so:
