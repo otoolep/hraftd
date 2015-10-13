@@ -142,6 +142,24 @@ func (s *Store) Set(key, value string) error {
 
 // Delete deletes the given key.
 func (s *Store) Delete(key string) error {
+	if s.raft.State() != raft.Leader {
+		return fmt.Errorf("not leader")
+	}
+
+	c := &command{
+		Op:  "delete",
+		Key: key,
+	}
+	b, err := json.Marshal(c)
+	if err != nil {
+		return err
+	}
+
+	f := s.raft.Apply(b, raftTimeout)
+	if err, ok := f.(error); ok {
+		return err
+	}
+
 	return nil
 }
 
