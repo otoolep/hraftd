@@ -67,12 +67,12 @@ curl -XGET localhost:11002/key/user2
 ```
 
 #### Stale reads
-Because any node will answer a GET request, and nodes may be "fall behind" udpates, stale reads are possible. Again, hraftd is a simple program, for the purpose of demonstrating a consistent, distributed key-value store. These shortcomings can be addressed by enhancements to the existing source.
+Because any node will answer a GET request, and nodes may "fall behind" udpates, stale reads are possible. Again, hraftd is a simple program, for the purpose of demonstrating a consistent, distributed key-value store. These shortcomings can be addressed by enhancements to the existing source.
 
 ### Tolerating failure
 Kill the leader process and watch one of the other nodes be elected leader. The keys are still available for query on the other nodes, and you can set keys on the new leader. Furthermore when the first node is restarted, it will rejoin the cluster and learn about any updates that occurred while it was down.
 
-A 3-node cluster can tolerate the failure of a single node, but a 5-node cluster can tolerate the failure of two nodes. But 5-node clusters require that the leader contact more nodes before any change e.g. setting a key's value, can be considered committed.
+A 3-node cluster can tolerate the failure of a single node, but a 5-node cluster can tolerate the failure of two nodes. But 5-node clusters require that the leader contact a larger number of nodes before any change e.g. setting a key's value, can be considered committed.
 
 ### Leader-forwarding
 Automatically forwarding requests to set keys to the current leader is not implemented. The client must always send requests to change a key to the leader or an error will be returned.
