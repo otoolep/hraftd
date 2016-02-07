@@ -5,7 +5,6 @@ package httpd
 import (
 	"encoding/json"
 	"io"
-	"io/ioutil"
 	"log"
 	"net"
 	"net/http"
@@ -85,13 +84,8 @@ func (s *Service) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 }
 
 func (s *Service) handleJoin(w http.ResponseWriter, r *http.Request) {
-	b, err := ioutil.ReadAll(r.Body)
-	if err != nil {
-		w.WriteHeader(http.StatusBadRequest)
-		return
-	}
 	m := map[string]string{}
-	if err := json.Unmarshal(b, &m); err != nil {
+	if err := json.NewDecoder(r.Body).Decode(&m); err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
@@ -144,14 +138,10 @@ func (s *Service) handleKeyRequest(w http.ResponseWriter, r *http.Request) {
 
 	case "POST":
 		// Read the value from the POST body.
-		b, err := ioutil.ReadAll(r.Body)
-		if err != nil {
+		m := map[string]string{}
+		if err := json.NewDecoder(r.Body).Decode(&m); err != nil {
 			w.WriteHeader(http.StatusBadRequest)
 			return
-		}
-		m := map[string]string{}
-		if err := json.Unmarshal(b, &m); err != nil {
-			w.WriteHeader(http.StatusBadRequest)
 		}
 		for k, v := range m {
 			if err := s.store.Set(k, v); err != nil {
