@@ -210,13 +210,8 @@ func (f *fsm) Snapshot() (raft.FSMSnapshot, error) {
 
 // Restore stores the key-value store to a previous state.
 func (f *fsm) Restore(rc io.ReadCloser) error {
-	b, err := ioutil.ReadAll(rc)
-	if err != nil {
-		return err
-	}
-
 	o := make(map[string]string)
-	if err := json.Unmarshal(b, &o); err != nil {
+	if err := json.NewDecoder(rc).Decode(&o); err != nil {
 		return err
 	}
 
