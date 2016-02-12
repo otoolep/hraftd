@@ -13,12 +13,13 @@ import (
 	"github.com/otoolep/hraftd/store"
 )
 
+// Command line defaults
 const (
 	DefaultHTTPAddr = ":11000"
 	DefaultRaftAddr = ":12000"
 )
 
-// Parameters
+// Command line parameters
 var httpAddr string
 var raftAddr string
 var joinAddr string
@@ -70,6 +71,7 @@ func main() {
 
 	log.Println("hraft started successfully")
 
+	// Block forever.
 	select {}
 }
 
