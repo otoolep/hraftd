@@ -56,7 +56,7 @@ func New() *Store {
 }
 
 // Open opens the store. If enableSingle is set, and there are no existing peers,
-// then this node becomesthe first node, and therefore leader, of the cluster.
+// then this node becomes the first node, and therefore leader, of the cluster.
 func (s *Store) Open(enableSingle bool) error {
 	// Setup Raft configuration.
 	config := raft.DefaultConfig()
