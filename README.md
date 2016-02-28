@@ -3,7 +3,7 @@ _For background on this project check out this [blog post](http://www.philipotoo
 hraftd [![Circle CI](https://circleci.com/gh/otoolep/hraftd/tree/master.svg?style=svg)](https://circleci.com/gh/otoolep/hraftd/tree/master) [![GoDoc](https://godoc.org/github.com/otoolep/hraftd?status.png)](https://godoc.org/github.com/otoolep/hraftd)
 ======
 
-hraftd is a reference example use of the [Hashicorp Raft implementation](https://github.com/hashicorp/raft), inspired by [raftd](https://github.com/goraft/raftd). [Raft](https://raft.github.io/) is a _distributed consensus protocol_, meaning its purpose is to ensure that a set of nodes -- a cluster -- agree on the state of some arbitrary system, even when nodes are vulnerable to failure and network partitions. Distributed consensus is a fundamental concept when it comes to building fault-tolerant systems.
+hraftd is a reference example use of the [Hashicorp Raft implementation](https://github.com/hashicorp/raft), inspired by [raftd](https://github.com/goraft/raftd). [Raft](https://raft.github.io/) is a _distributed consensus protocol_, meaning its purpose is to ensure that a set of nodes -- a cluster -- agree on the state of some arbitrary state machine, even when nodes are vulnerable to failure and network partitions. Distributed consensus is a fundamental concept when it comes to building fault-tolerant systems.
 
 A simple example system like hraftd makes it easy to study Raft in general, and Hashicorp's implementation in particular.
 
@@ -67,7 +67,7 @@ curl -XGET localhost:11002/key/user2
 ```
 
 #### Stale reads
-Because any node will answer a GET request, and nodes may "fall behind" udpates, stale reads are possible. Again, hraftd is a simple program, for the purpose of demonstrating a consistent, distributed key-value store. These shortcomings can be addressed by enhancements to the existing source.
+Because any node will answer a GET request, and nodes may "fall behind" updates, stale reads are possible. Again, hraftd is a simple program, for the purpose of demonstrating a distributed key-value store. These shortcomings can be addressed by enhancements to the existing source.
 
 ### Tolerating failure
 Kill the leader process and watch one of the other nodes be elected leader. The keys are still available for query on the other nodes, and you can set keys on the new leader. Furthermore when the first node is restarted, it will rejoin the cluster and learn about any updates that occurred while it was down.
