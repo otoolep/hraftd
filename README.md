@@ -78,4 +78,4 @@ A 3-node cluster can tolerate the failure of a single node, but a 5-node cluster
 Automatically forwarding requests to set keys to the current leader is not implemented. The client must always send requests to change a key to the leader or an error will be returned.
 
 ## Credits
-Thanks to the authors of [raftd](https://github.com/goraft/raftd) for providing the inspiration for this system. The current use of Raft by [InfluxDB](https://github.com/influxdb/influxdb) was also helpful.
+Thanks to the authors of [raftd](https://github.com/goraft/raftd) for providing the inspiration for this system. The current use of Raft by [InfluxDB](https://github.com/influxdata/influxdb) was also helpful.
