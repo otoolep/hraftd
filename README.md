@@ -11,16 +11,20 @@ A simple example system like hraftd makes it easy to study Raft in general, and 
 
 Like raftd, the implementation is a very simple key-value store. You can set a key like so:
 
-`curl -XPOST localhost:11000/key -d '{"foo": "bar"}'`
+```bash
+curl -XPOST localhost:11000/key -d '{"foo": "bar"}'
+```
 
 You can read the value for a key like so:
 
-`curl -XGET localhost:11000/key/foo`
+````bash
+curl -XGET localhost:11000/key/foo
+```
 
 ## Running hraftd
 Starting and running a hraftd cluster is easy. Download hraftd like so:
 
-```
+```bash
 mkdir hraftd
 cd hraftd/
 export GOPATH=$PWD
@@ -29,11 +33,13 @@ go get github.com/otoolep/hraftd
 
 Run your first hraftd node like so:
 
-`$GOPATH/bin/hraftd ~/node0`
+```bash
+$GOPATH/bin/hraftd ~/node0
+```
 
 You can now set a key and read its value back:
 
-```
+```bash
 curl -XPOST localhost:11000/key -d '{"user1": "batman"}'
 curl -XGET localhost:11000/key/user1
 ```
@@ -41,14 +47,14 @@ curl -XGET localhost:11000/key/user1
 ### Bring up a cluster
 Let's bring up 2 more nodes, so we have a 3-node cluster. That way we can tolerate the failure of 1 node:
 
-```
+```bash
 $GOPATH/bin/hraftd -haddr :11001 -raddr :12001 -join :11000 ~/node1
 $GOPATH/bin/hraftd -haddr :11002 -raddr :12002 -join :11000 ~/node2
 ```
 
 This tells each new node to join the existing node. Once joined, each node now knows about the key:
 
-```
+```bash
 curl -XGET localhost:11000/key/user1
 curl -XGET localhost:11001/key/user1
 curl -XGET localhost:11002/key/user1
@@ -56,11 +62,13 @@ curl -XGET localhost:11002/key/user1
 
 Furthermore you can add a second key:
 
-`curl -XPOST localhost:11000/key -d '{"user2": "robin"}'`
+```bash
+curl -XPOST localhost:11000/key -d '{"user2": "robin"}'
+```
 
 Confirm that the new key has been set like so:
 
-```
+```bash
 curl -XGET localhost:11000/key/user2
 curl -XGET localhost:11001/key/user2
 curl -XGET localhost:11002/key/user2
