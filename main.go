@@ -8,6 +8,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"os/signal"
 
 	"github.com/otoolep/hraftd/http"
 	"github.com/otoolep/hraftd/store"
@@ -71,8 +72,10 @@ func main() {
 
 	log.Println("hraft started successfully")
 
-	// Block forever.
-	select {}
+	terminate := make(chan os.Signal, 1)
+	signal.Notify(terminate, os.Interrupt)
+	<-terminate
+	log.Println("hraftd exiting")
 }
 
 func join(joinAddr, raftAddr string) error {
