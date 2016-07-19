@@ -68,7 +68,9 @@ curl -XGET localhost:11002/key/user2
 ```
 
 #### Stale reads
-Because any node will answer a GET request, and nodes may "fall behind" updates, stale reads are possible. Again, hraftd is a simple program, for the purpose of demonstrating a distributed key-value store. These shortcomings can be addressed by enhancements to the existing source.
+Because any node will answer a GET request, and nodes may "fall behind" updates, stale reads are possible. Again, hraftd is a simple program, for the purpose of demonstrating a distributed key-value store. If you are particularly interested in learning more about issue, you should check out [rqlite](https://github.com/rqlite/rqlite). rqlite allows the client to control [read consistency](https://github.com/rqlite/rqlite/blob/master/doc/CONSISTENCY.md), allowing the client to trade off read-responsiveness and correctness.
+
+Read-consistency support could be ported to hraftd if necessary.
 
 ### Tolerating failure
 Kill the leader process and watch one of the other nodes be elected leader. The keys are still available for query on the other nodes, and you can set keys on the new leader. Furthermore, when the first node is restarted, it will rejoin the cluster and learn about any updates that occurred while it was down.
