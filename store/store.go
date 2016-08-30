@@ -137,7 +137,7 @@ func (s *Store) Set(key, value string) error {
 		return err
 	}
 
-	return nil
+	return f.Error()
 }
 
 // Delete deletes the given key.
@@ -160,7 +160,7 @@ func (s *Store) Delete(key string) error {
 		return err
 	}
 
-	return nil
+	return f.Error()
 }
 
 // Join joins a node, located at addr, to this store. The node must be ready to
