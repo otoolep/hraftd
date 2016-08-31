@@ -133,11 +133,7 @@ func (s *Store) Set(key, value string) error {
 	}
 
 	f := s.raft.Apply(b, raftTimeout)
-	if err, ok := f.(error); ok {
-		return err
-	}
-
-	return nil
+	return f.Error()
 }
 
 // Delete deletes the given key.
@@ -156,11 +152,7 @@ func (s *Store) Delete(key string) error {
 	}
 
 	f := s.raft.Apply(b, raftTimeout)
-	if err, ok := f.(error); ok {
-		return err
-	}
-
-	return nil
+	return f.Error()
 }
 
 // Join joins a node, located at addr, to this store. The node must be ready to
