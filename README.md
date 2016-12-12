@@ -47,6 +47,7 @@ Let's bring up 2 more nodes, so we have a 3-node cluster. That way we can tolera
 $GOPATH/bin/hraftd -haddr :11001 -raddr :12001 -join :11000 ~/node1
 $GOPATH/bin/hraftd -haddr :11002 -raddr :12002 -join :11000 ~/node2
 ```
+_This example shows each hraftd node running on the same host, so each node must listen on different ports. This would not be necessary if each node ran on a different host._
 
 This tells each new node to join the existing node. Once joined, each node now knows about the key:
 ```bash
