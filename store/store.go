@@ -7,11 +7,9 @@
 package store
 
 import (
-	"bytes"
 	"encoding/json"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"log"
 	"net"
 	"os"
@@ -61,20 +59,6 @@ func (s *Store) Open(enableSingle bool) error {
 	// Setup Raft configuration.
 	config := raft.DefaultConfig()
 
-	// Check for any existing peers.
-	peers, err := readPeersJSON(filepath.Join(s.RaftDir, "peers.json"))
-	if err != nil {
-		return err
-	}
-
-	// Allow the node to entry single-mode, potentially electing itself, if
-	// explicitly enabled and there is only 1 node in the cluster already.
-	if enableSingle && len(peers) <= 1 {
-		s.logger.Println("enabling single-node mode")
-		config.EnableSingleNode = true
-		config.DisableBootstrapAfterElect = false
-	}
-
 	// Setup Raft communication.
 	addr, err := net.ResolveTCPAddr("tcp", s.RaftBind)
 	if err != nil {
@@ -87,6 +71,20 @@ func (s *Store) Open(enableSingle bool) error {
 
 	// Create peer storage.
 	peerStore := raft.NewJSONPeers(s.RaftDir, transport)
+
+	// Check for any existing peers.
+	peers, err := peerStore.Peers()
+	if err != nil {
+		return err
+	}
+
+	// Allow the node to entry single-mode, potentially electing itself, if
+	// explicitly enabled and there is only 1 node in the cluster already.
+	if enableSingle && len(peers) <= 1 {
+		s.logger.Println("enabling single-node mode")
+		config.EnableSingleNode = true
+		config.DisableBootstrapAfterElect = false
+	}
 
 	// Create the snapshot store. This allows the Raft to truncate the log.
 	snapshots, err := raft.NewFileSnapshotStore(s.RaftDir, retainSnapshotCount, os.Stderr)
@@ -261,22 +259,3 @@ func (f *fsmSnapshot) Persist(sink raft.SnapshotSink) error {
 }
 
 func (f *fsmSnapshot) Release() {}
-
-func readPeersJSON(path string) ([]string, error) {
-	b, err := ioutil.ReadFile(path)
-	if err != nil && !os.IsNotExist(err) {
-		return nil, err
-	}
-
-	if len(b) == 0 {
-		return nil, nil
-	}
-
-	var peers []string
-	dec := json.NewDecoder(bytes.NewReader(b))
-	if err := dec.Decode(&peers); err != nil {
-		return nil, err
-	}
-
-	return peers, nil
-}
