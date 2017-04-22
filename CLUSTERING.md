@@ -10,11 +10,16 @@ $GOPATH/bin/hraftd -haddr 192.168.0.1:11000 -raddr 192.168.0.1:12000 ~/node
 ```
 This way the node is listening on an address reachable from the other nodes. This node will start up and become leader of a single-node cluster.
 
-Next, start the other two nodes as follows:
+Next, start the second node as follows:
 ```
 $GOPATH/bin/hraftd -haddr 192.168.0.2:11000 -raddr 192.168.0.2:12000 -join 192.168.0.1:11000 ~/node
+```
+
+Finally, start the third node as follows:
+```
 $GOPATH/bin/hraftd -haddr 192.168.0.3:11000 -raddr 192.168.0.3:12000 -join 192.168.0.2:11000 ~/node
 ```
+
 _Specifically using ports 11000 and 12000 is not required. You can use other ports if you wish._
 
 Note how each node listens on its own address, but joins to the address of the leader node. These two nodes will start, join the with leader at `192.168.0.2:11000`, and a 3-node cluster will be formed.
