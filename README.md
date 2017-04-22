@@ -17,7 +17,7 @@ curl -XPOST localhost:11000/key -d '{"foo": "bar"}'
 
 You can read the value for a key like so:
 
-````bash
+```bash
 curl -XGET localhost:11000/key/foo
 ```
 
