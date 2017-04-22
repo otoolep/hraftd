@@ -44,6 +44,8 @@ curl -XGET localhost:11000/key/user1
 ```
 
 ### Bring up a cluster
+_A walkthrough of setting up a more realistic cluster is [here](https://github.com/otoolep/hraftd/blob/master/CLUSTERING.md)._
+
 Let's bring up 2 more nodes, so we have a 3-node cluster. That way we can tolerate the failure of 1 node:
 ```bash
 $GOPATH/bin/hraftd -haddr :11001 -raddr :12001 -join :11000 ~/node1
