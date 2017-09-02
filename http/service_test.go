@@ -105,10 +105,10 @@ func doPost(t *testing.T, url, key, value string) {
 		t.Fatalf("failed to encode key and value for POST: %s", err)
 	}
 	resp, err := http.Post(fmt.Sprintf("%s/key", url), "application-type/json", bytes.NewReader(b))
-	defer resp.Body.Close()
 	if err != nil {
 		t.Fatalf("POST request failed: %s", err)
 	}
+	defer resp.Body.Close()
 }
 
 func doDelete(t *testing.T, u, key string) {
