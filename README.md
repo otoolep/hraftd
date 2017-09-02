@@ -9,14 +9,12 @@ A simple example system like hraftd makes it easy to study the Raft consensus pr
 
 ## Reading and writing keys
 
-The reference implementation is a very simple in-memory key-value store. You can set a key like so:
-
+The reference implementation is a very simple in-memory key-value store. You can set a key by sending a request to the HTTP bind address (which defaults to `localhost:11000`):
 ```bash
 curl -XPOST localhost:11000/key -d '{"foo": "bar"}'
 ```
 
 You can read the value for a key like so:
-
 ```bash
 curl -XGET localhost:11000/key/foo
 ```
