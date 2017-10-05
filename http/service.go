@@ -22,8 +22,8 @@ type Store interface {
 	// Delete removes the given key, via distributed consensus.
 	Delete(key string) error
 
-	// Join joins the node, reachable at addr, to the cluster.
-	Join(addr string) error
+	// Join joins the node, identitifed by nodeID and reachable at addr, to the cluster.
+	Join(nodeID string, addr string) error
 }
 
 // Service provides HTTP service.
@@ -90,7 +90,7 @@ func (s *Service) handleJoin(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if len(m) != 1 {
+	if len(m) != 2 {
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
@@ -101,7 +101,13 @@ func (s *Service) handleJoin(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if err := s.store.Join(remoteAddr); err != nil {
+	nodeID, ok := m["id"]
+	if !ok {
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	if err := s.store.Join(nodeID, remoteAddr); err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
