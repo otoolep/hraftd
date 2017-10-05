@@ -82,7 +82,7 @@ func (t *testStore) Delete(key string) error {
 	return nil
 }
 
-func (t *testStore) Join(addr string) error {
+func (t *testStore) Join(nodeID, addr string) error {
 	return nil
 }
 

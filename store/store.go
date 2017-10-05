@@ -55,9 +55,11 @@ func New() *Store {
 
 // Open opens the store. If enableSingle is set, and there are no existing peers,
 // then this node becomes the first node, and therefore leader, of the cluster.
-func (s *Store) Open(enableSingle bool) error {
+// localID should be the server identifier for this node.
+func (s *Store) Open(enableSingle bool, localID raft.ServerID) error {
 	// Setup Raft configuration.
 	config := raft.DefaultConfig()
+	config.LocalID = localID
 
 	// Setup Raft communication.
 	addr, err := net.ResolveTCPAddr("tcp", s.RaftBind)
@@ -67,23 +69,6 @@ func (s *Store) Open(enableSingle bool) error {
 	transport, err := raft.NewTCPTransport(s.RaftBind, addr, 3, 10*time.Second, os.Stderr)
 	if err != nil {
 		return err
-	}
-
-	// Create peer storage.
-	peerStore := raft.NewJSONPeers(s.RaftDir, transport)
-
-	// Check for any existing peers.
-	peers, err := peerStore.Peers()
-	if err != nil {
-		return err
-	}
-
-	// Allow the node to entry single-mode, potentially electing itself, if
-	// explicitly enabled and there is only 1 node in the cluster already.
-	if enableSingle && len(peers) <= 1 {
-		s.logger.Println("enabling single-node mode")
-		config.EnableSingleNode = true
-		config.DisableBootstrapAfterElect = false
 	}
 
 	// Create the snapshot store. This allows the Raft to truncate the log.
@@ -99,11 +84,24 @@ func (s *Store) Open(enableSingle bool) error {
 	}
 
 	// Instantiate the Raft systems.
-	ra, err := raft.NewRaft(config, (*fsm)(s), logStore, logStore, snapshots, peerStore, transport)
+	ra, err := raft.NewRaft(config, (*fsm)(s), logStore, logStore, snapshots, transport)
 	if err != nil {
 		return fmt.Errorf("new raft: %s", err)
 	}
 	s.raft = ra
+
+	if enableSingle {
+		configuration := raft.Configuration{
+			Servers: []raft.Server{
+				raft.Server{
+					ID:      config.LocalID,
+					Address: transport.LocalAddr(),
+				},
+			},
+		}
+		ra.BootstrapCluster(configuration)
+	}
+
 	return nil
 }
 
@@ -153,12 +151,12 @@ func (s *Store) Delete(key string) error {
 	return f.Error()
 }
 
-// Join joins a node, located at addr, to this store. The node must be ready to
-// respond to Raft communications at that address.
-func (s *Store) Join(addr string) error {
+// Join joins a node, identified by nodeID and located at addr, to this store.
+// The node must be ready to respond to Raft communications at that address.
+func (s *Store) Join(nodeID, addr string) error {
 	s.logger.Printf("received join request for remote node as %s", addr)
 
-	f := s.raft.AddPeer(addr)
+	f := s.raft.AddVoter(raft.ServerID(nodeID), raft.ServerAddress(addr), 0, 0)
 	if f.Error() != nil {
 		return f.Error()
 	}

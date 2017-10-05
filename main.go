@@ -10,6 +10,7 @@ import (
 	"os"
 	"os/signal"
 
+	"github.com/hashicorp/raft"
 	"github.com/otoolep/hraftd/http"
 	"github.com/otoolep/hraftd/store"
 )
@@ -24,11 +25,13 @@ const (
 var httpAddr string
 var raftAddr string
 var joinAddr string
+var nodeID string
 
 func init() {
 	flag.StringVar(&httpAddr, "haddr", DefaultHTTPAddr, "Set the HTTP bind address")
 	flag.StringVar(&raftAddr, "raddr", DefaultRaftAddr, "Set Raft bind address")
 	flag.StringVar(&joinAddr, "join", "", "Set join address, if any")
+	flag.StringVar(&nodeID, "id", "", "Node ID")
 	flag.Usage = func() {
 		fmt.Fprintf(os.Stderr, "Usage: %s [options] <raft-data-path> \n", os.Args[0])
 		flag.PrintDefaults()
@@ -54,7 +57,7 @@ func main() {
 	s := store.New()
 	s.RaftDir = raftDir
 	s.RaftBind = raftAddr
-	if err := s.Open(joinAddr == ""); err != nil {
+	if err := s.Open(joinAddr == "", raft.ServerID(nodeID)); err != nil {
 		log.Fatalf("failed to open store: %s", err.Error())
 	}
 
@@ -65,7 +68,7 @@ func main() {
 
 	// If join was specified, make the join request.
 	if joinAddr != "" {
-		if err := join(joinAddr, raftAddr); err != nil {
+		if err := join(joinAddr, raftAddr, nodeID); err != nil {
 			log.Fatalf("failed to join node at %s: %s", joinAddr, err.Error())
 		}
 	}
@@ -78,8 +81,8 @@ func main() {
 	log.Println("hraftd exiting")
 }
 
-func join(joinAddr, raftAddr string) error {
-	b, err := json.Marshal(map[string]string{"addr": raftAddr})
+func join(joinAddr, raftAddr, nodeID string) error {
+	b, err := json.Marshal(map[string]string{"addr": raftAddr, "id": nodeID})
 	if err != nil {
 		return err
 	}
