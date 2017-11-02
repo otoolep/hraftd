@@ -10,7 +10,6 @@ import (
 	"os"
 	"os/signal"
 
-	"github.com/hashicorp/raft"
 	"github.com/otoolep/hraftd/http"
 	"github.com/otoolep/hraftd/store"
 )
@@ -57,7 +56,7 @@ func main() {
 	s := store.New()
 	s.RaftDir = raftDir
 	s.RaftBind = raftAddr
-	if err := s.Open(joinAddr == "", raft.ServerID(nodeID)); err != nil {
+	if err := s.Open(joinAddr == "", nodeID); err != nil {
 		log.Fatalf("failed to open store: %s", err.Error())
 	}
 
