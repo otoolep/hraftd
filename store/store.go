@@ -154,13 +154,13 @@ func (s *Store) Delete(key string) error {
 // Join joins a node, identified by nodeID and located at addr, to this store.
 // The node must be ready to respond to Raft communications at that address.
 func (s *Store) Join(nodeID, addr string) error {
-	s.logger.Printf("received join request for remote node as %s", addr)
+	s.logger.Printf("received join request for remote node %s at %s", nodeID, addr)
 
 	f := s.raft.AddVoter(raft.ServerID(nodeID), raft.ServerAddress(addr), 0, 0)
 	if f.Error() != nil {
 		return f.Error()
 	}
-	s.logger.Printf("node at %s joined successfully", addr)
+	s.logger.Printf("node %s at %s joined successfully", nodeID, addr)
 	return nil
 }
 
