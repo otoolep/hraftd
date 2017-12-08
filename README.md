@@ -85,6 +85,3 @@ Automatically forwarding requests to set keys to the current leader is not imple
 
 ## Production use of Raft
 For a production-grade example of using Hashicorp's Raft implementation, to replicate a SQLite database, check out [rqlite](https://github.com/rqlite/rqlite).
-
-## Credits
-Thanks to the authors of [raftd](https://github.com/goraft/raftd) for providing the inspiration for this system. The current use of Raft by [InfluxDB](https://github.com/influxdata/influxdb) was also helpful.
