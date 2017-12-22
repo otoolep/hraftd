@@ -1,5 +1,5 @@
 # Multi-node Clustering
-What follows is a detailed example of running a multi-node cluster.
+What follows is a detailed example of running a multi-node hraftd cluster.
 
 Imagine you have 3 machines, with the IP addresses 192.168.0.1, 192.168.0.2, and 192.168.0.3 respectively. Let's also assume that each machine can reach the other two machines using these addresses.
 
