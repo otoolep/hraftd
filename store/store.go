@@ -3,7 +3,8 @@
 // values are changed only when a majority of nodes in the cluster agree on
 // the new value.
 //
-// Distributed consensus is provided via the Raft algorithm.
+// Distributed consensus is provided via the Raft algorithm, specifically the
+// Hashicorp implementation.
 package store
 
 import (
