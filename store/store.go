@@ -94,7 +94,7 @@ func (s *Store) Open(enableSingle bool, localID string) error {
 	if enableSingle {
 		configuration := raft.Configuration{
 			Servers: []raft.Server{
-				raft.Server{
+				{
 					ID:      config.LocalID,
 					Address: transport.LocalAddr(),
 				},
