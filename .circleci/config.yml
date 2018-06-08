@@ -5,7 +5,7 @@ jobs:
       - image: circleci/golang:1.10
     steps:
       - checkout
-      - run go version
+      - run: go version
 
 
 
