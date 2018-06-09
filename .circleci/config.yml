@@ -1,14 +1,14 @@
 version: 2
 jobs:
   build:
-    working_directory: ~/hraftd
+    working_directory: ~/hraftd/src/github.com/otoolep/hraftd
     docker:
       - image: circleci/golang:1.10
 
 
     steps:
-        - checkout:
-            path: ~/hraftd/src/github.com/otoolep/hraftd
+        - checkout
+        - run: go tool vet
         - run: go get -t -d -v ./...
         - run: go test -v ./...
 
