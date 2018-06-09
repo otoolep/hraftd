@@ -10,5 +10,5 @@ jobs:
         - checkout:
             path: ~/hraftd/src/github.com/otoolep/hraftd
         - run: go get -t -d -v ./...
-        - run: go build -v
+        - run: go test -v ./...
 
