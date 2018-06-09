@@ -1,13 +1,17 @@
 version: 2
 jobs:
   build:
-
+    working_directory: ~/hraftd
+    environment:
+        GOPATH: "~/hraftd"
     docker:
       - image: circleci/golang:1.10
 
+
     steps:
-      - checkout
-      - run: ls
+      - checkout ~/hraftd/src/github.com/hraftd
+      - run: go get -t -d -v ./...
+      - run: go install ./...
 
 
 
