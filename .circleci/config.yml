@@ -8,7 +8,7 @@ jobs:
 
     steps:
         - checkout
-        - run: go tool vet
+        - run: go tool vet .
         - run: go get -t -d -v ./...
         - run: go test -v ./...
 
