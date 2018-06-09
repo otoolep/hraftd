@@ -2,8 +2,6 @@ version: 2
 jobs:
   build:
     working_directory: ~/hraftd
-    environment:
-        GOPATH: "~/hraftd"
     docker:
       - image: circleci/golang:1.10
 
