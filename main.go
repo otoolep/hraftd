@@ -21,12 +21,14 @@ const (
 )
 
 // Command line parameters
+var inmem bool
 var httpAddr string
 var raftAddr string
 var joinAddr string
 var nodeID string
 
 func init() {
+	flag.BoolVar(&inmem, "inmem", false, "Use in-memory storage for Raft")
 	flag.StringVar(&httpAddr, "haddr", DefaultHTTPAddr, "Set the HTTP bind address")
 	flag.StringVar(&raftAddr, "raddr", DefaultRaftAddr, "Set Raft bind address")
 	flag.StringVar(&joinAddr, "join", "", "Set join address, if any")
@@ -53,7 +55,7 @@ func main() {
 	}
 	os.MkdirAll(raftDir, 0700)
 
-	s := store.New()
+	s := store.New(inmem)
 	s.RaftDir = raftDir
 	s.RaftBind = raftAddr
 	if err := s.Open(joinAddr == "", nodeID); err != nil {
