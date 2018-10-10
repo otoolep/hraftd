@@ -74,7 +74,7 @@ func main() {
 		}
 	}
 
-	log.Println("hraft started successfully")
+	log.Println("hraftd started successfully")
 
 	terminate := make(chan os.Signal, 1)
 	signal.Notify(terminate, os.Interrupt)
