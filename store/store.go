@@ -165,8 +165,13 @@ func (s *Store) Delete(key string) error {
 
 // Join joins a node, identified by nodeID and located at addr, to this store.
 // The node must be ready to respond to Raft communications at that address.
+// This command must be run on the leader, otherwise AddVoter will fail.
 func (s *Store) Join(nodeID, addr string) error {
 	s.logger.Printf("received join request for remote node %s at %s", nodeID, addr)
+
+	if s.raft.State() != raft.Leader {
+		return fmt.Errorf("not leader")
+	}
 
 	configFuture := s.raft.GetConfiguration()
 	if err := configFuture.Error(); err != nil {
