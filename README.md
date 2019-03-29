@@ -71,7 +71,7 @@ curl -XGET localhost:11002/key/user2
 ```
 
 #### Stale reads
-Because any node will answer a GET request, and nodes may "fall behind" updates, stale reads are possible. Again, hraftd is a simple program, for the purpose of demonstrating a distributed key-value store. If you are particularly interested in learning more about issue, you should check out [rqlite](https://github.com/rqlite/rqlite). rqlite allows the client to control [read consistency](https://github.com/rqlite/rqlite/blob/master/doc/CONSISTENCY.md), allowing the client to trade off read-responsiveness and correctness.
+Because any node will answer a GET request, and nodes may "fall behind" updates, stale reads are possible. Again, hraftd is a simple program, for the purpose of demonstrating a distributed key-value store. If you are particularly interested in learning more about issue, you should check out [rqlite](https://github.com/rqlite/rqlite). rqlite allows the client to control [read consistency](https://github.com/rqlite/rqlite/blob/master/DOC/CONSISTENCY.md), allowing the client to trade off read-responsiveness and correctness.
 
 Read-consistency support could be ported to hraftd if necessary.
 
