@@ -20,6 +20,7 @@ import (
 
 	"github.com/hashicorp/raft"
 	"github.com/hashicorp/raft-boltdb"
+	"errors"
 )
 
 const (
@@ -225,7 +226,7 @@ func (s *Store) Exit(nodeID, addr string) error {
 	}
 
 	s.logger.Printf("node %s at %s exited fail: no this node", nodeID, addr)
-	return nil
+	return errors.New("error: no this node")
 }
 
 type fsm Store
