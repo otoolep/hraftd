@@ -220,9 +220,6 @@ func (s *Store) Exit(nodeID, addr string) error {
 				return fmt.Errorf("error removing existing node %s at %s: %s", nodeID, addr, err)
 			}
 			s.logger.Printf("node %s at %s exited successfully", nodeID, addr)
-
-
-
 			return nil
 		}
 	}
