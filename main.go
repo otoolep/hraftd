@@ -47,6 +47,7 @@ func main() {
 		os.Exit(1)
 	}
 
+	//mike 设置了raft数据的存放路径
 	// Ensure Raft storage exists.
 	raftDir := flag.Arg(0)
 	if raftDir == "" {
@@ -58,17 +59,18 @@ func main() {
 	s := store.New(inmem)
 	s.RaftDir = raftDir
 	s.RaftBind = raftAddr
+	//mike 设置raft的log和实例等
 	if err := s.Open(joinAddr == "", nodeID); err != nil {
 		log.Fatalf("failed to open store: %s", err.Error())
 	}
 
-	h := httpd.New(httpAddr, s)
+	h := httpd.New(httpAddr, s)//mike 启动http服务
 	if err := h.Start(); err != nil {
 		log.Fatalf("failed to start HTTP service: %s", err.Error())
 	}
 
 	// If join was specified, make the join request.
-	if joinAddr != "" {
+	if joinAddr != "" {//mike follower节点加入到cluster
 		if err := join(joinAddr, raftAddr, nodeID); err != nil {
 			log.Fatalf("failed to join node at %s: %s", joinAddr, err.Error())
 		}

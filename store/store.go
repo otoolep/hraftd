@@ -84,10 +84,10 @@ func (s *Store) Open(enableSingle bool, localID string) error {
 	// Create the log store and stable store.
 	var logStore raft.LogStore
 	var stableStore raft.StableStore
-	if s.inmem {
+	if s.inmem {//mike 内存存储
 		logStore = raft.NewInmemStore()
 		stableStore = raft.NewInmemStore()
-	} else {
+	} else {//mike 文件存储
 		boltDB, err := raftboltdb.NewBoltStore(filepath.Join(s.RaftDir, "raft.db"))
 		if err != nil {
 			return fmt.Errorf("new bolt store: %s", err)
@@ -96,6 +96,7 @@ func (s *Store) Open(enableSingle bool, localID string) error {
 		stableStore = boltDB
 	}
 
+	//mike new一个raft实例，但没加入或者启动
 	// Instantiate the Raft systems.
 	ra, err := raft.NewRaft(config, (*fsm)(s), logStore, stableStore, snapshots, transport)
 	if err != nil {
@@ -103,7 +104,7 @@ func (s *Store) Open(enableSingle bool, localID string) error {
 	}
 	s.raft = ra
 
-	if enableSingle {
+	if enableSingle {//初始化时需要bootstrap形式启动raft集群
 		configuration := raft.Configuration{
 			Servers: []raft.Server{
 				{
@@ -112,6 +113,7 @@ func (s *Store) Open(enableSingle bool, localID string) error {
 				},
 			},
 		}
+		//mike 如果是初始化，则启动
 		ra.BootstrapCluster(configuration)
 	}
 
