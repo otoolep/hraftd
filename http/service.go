@@ -24,9 +24,6 @@ type Store interface {
 
 	// Join joins the node, identitifed by nodeID and reachable at addr, to the cluster.
 	Join(nodeID string, addr string) error
-
-	// Exit exits the node
-	Exit(nodeID string, addr string) error
 }
 
 // Service provides HTTP service.
@@ -81,8 +78,6 @@ func (s *Service) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		s.handleKeyRequest(w, r)
 	} else if r.URL.Path == "/join" {
 		s.handleJoin(w, r)
-	}else if r.URL.Path == "/exit" {
-		s.handleExit(w, r)
 	} else {
 		w.WriteHeader(http.StatusNotFound)
 	}
@@ -113,36 +108,6 @@ func (s *Service) handleJoin(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if err := s.store.Join(nodeID, remoteAddr); err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		return
-	}
-}
-
-func (s *Service) handleExit(w http.ResponseWriter, r *http.Request) {
-	m := map[string]string{}
-	if err := json.NewDecoder(r.Body).Decode(&m); err != nil {
-		w.WriteHeader(http.StatusBadRequest)
-		return
-	}
-
-	if len(m) != 2 {
-		w.WriteHeader(http.StatusBadRequest)
-		return
-	}
-
-	remoteAddr, ok := m["addr"]
-	if !ok {
-		w.WriteHeader(http.StatusBadRequest)
-		return
-	}
-
-	nodeID, ok := m["id"]
-	if !ok {
-		w.WriteHeader(http.StatusBadRequest)
-		return
-	}
-
-	if err := s.store.Exit(nodeID, remoteAddr); err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
