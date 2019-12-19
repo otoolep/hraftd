@@ -18,8 +18,8 @@ import (
 	"sync"
 	"time"
 
-	"github.com/otoolep/raft"
-	"github.com/otoolep/raft-boltdb"
+	"github.com/hashicorp/raft"
+	"github.com/hashicorp/raft-boltdb"
 )
 
 const (
