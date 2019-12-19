@@ -9,6 +9,7 @@ jobs:
     steps:
         - checkout
         - run: bash < <(curl -s -S -L https://raw.githubusercontent.com/moovweb/gvm/master/binscripts/gvm-installer)
+        - run: source /home/circleci/.gvm/scripts/gvm
         - run: gvm install go1.13
         - run: gvm use go1.13
         - run: go tool vet .
