@@ -18,7 +18,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/hashicorp/raft"
+	"github.com/otoolep/raft"
 	"github.com/hashicorp/raft-boltdb"
 )
 
