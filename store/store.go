@@ -19,7 +19,7 @@ import (
 	"time"
 
 	"github.com/otoolep/raft"
-	"github.com/hashicorp/raft-boltdb"
+	"github.com/otoolep/raft-boltdb"
 )
 
 const (
