@@ -27,7 +27,7 @@ Starting and running a hraftd cluster is easy. Download hraftd like so:
 mkdir hraftd
 cd hraftd/
 export GOPATH=$PWD
-go get github.com/otoolep/hraftd
+GO111MODULE=on go get github.com/otoolep/hraftd
 ```
 
 Run your first hraftd node like so:
