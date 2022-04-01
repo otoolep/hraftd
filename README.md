@@ -22,12 +22,16 @@ curl -XGET localhost:11000/key/foo
 ## Running hraftd
 *Building hraftd requires Go 1.13 or later. [gvm](https://github.com/moovweb/gvm) is a great tool for installing and managing your versions of Go.*
 
-Starting and running a hraftd cluster is easy. Download hraftd like so:
+Starting and running a hraftd cluster is easy. Download and build hraftd like so:
 ```bash
-mkdir hraftd
-cd hraftd/
+mkdir work # or any director you like
+cd work
 export GOPATH=$PWD
-GO111MODULE=on go get github.com/otoolep/hraftd
+mkdir -p src/github.com/otoolep
+cd src/github.com/otoolep/
+git clone git@github.com:otoolep/hraftd.git
+cd hraftd
+go install
 ```
 
 Run your first hraftd node like so:
