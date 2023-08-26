@@ -41,7 +41,6 @@ func init() {
 
 func main() {
 	flag.Parse()
-
 	if flag.NArg() == 0 {
 		fmt.Fprintf(os.Stderr, "No Raft storage directory specified\n")
 		os.Exit(1)
@@ -74,6 +73,7 @@ func main() {
 		}
 	}
 
+	// We're up and running!
 	log.Println("hraftd started successfully")
 
 	terminate := make(chan os.Signal, 1)
@@ -92,6 +92,5 @@ func join(joinAddr, raftAddr, nodeID string) error {
 		return err
 	}
 	defer resp.Body.Close()
-
 	return nil
 }
