@@ -3,7 +3,7 @@ jobs:
   build:
     working_directory: ~/hraftd/src/github.com/otoolep/hraftd
     docker:
-      - image: circleci/golang:1.20
+      - image: cimg/go:1.21.0
 
 
     steps:
