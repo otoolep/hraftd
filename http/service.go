@@ -139,7 +139,6 @@ func (s *Service) handleKeyRequest(w http.ResponseWriter, r *http.Request) {
 			w.WriteHeader(http.StatusInternalServerError)
 			return
 		}
-
 		io.WriteString(w, string(b))
 
 	case "POST":
