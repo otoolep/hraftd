@@ -4,7 +4,7 @@ jobs:
     working_directory: ~/hraftd/src/github.com/otoolep/hraftd
     docker:
       - image: cimg/go:1.21.0
-
+    resource_class: large
 
     steps:
         - checkout
