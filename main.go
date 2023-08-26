@@ -10,14 +10,14 @@ import (
 	"os"
 	"os/signal"
 
-	"github.com/otoolep/hraftd/http"
+	httpd "github.com/otoolep/hraftd/http"
 	"github.com/otoolep/hraftd/store"
 )
 
 // Command line defaults
 const (
-	DefaultHTTPAddr = ":11000"
-	DefaultRaftAddr = ":12000"
+	DefaultHTTPAddr = "localhost:11000"
+	DefaultRaftAddr = "localhost:12000"
 )
 
 // Command line parameters
@@ -32,7 +32,7 @@ func init() {
 	flag.StringVar(&httpAddr, "haddr", DefaultHTTPAddr, "Set the HTTP bind address")
 	flag.StringVar(&raftAddr, "raddr", DefaultRaftAddr, "Set Raft bind address")
 	flag.StringVar(&joinAddr, "join", "", "Set join address, if any")
-	flag.StringVar(&nodeID, "id", "", "Node ID")
+	flag.StringVar(&nodeID, "id", "", "Node ID. If not set, same as Raft bind address")
 	flag.Usage = func() {
 		fmt.Fprintf(os.Stderr, "Usage: %s [options] <raft-data-path> \n", os.Args[0])
 		flag.PrintDefaults()
@@ -46,13 +46,18 @@ func main() {
 		os.Exit(1)
 	}
 
+	if nodeID == "" {
+		nodeID = raftAddr
+	}
+
 	// Ensure Raft storage exists.
 	raftDir := flag.Arg(0)
 	if raftDir == "" {
-		fmt.Fprintf(os.Stderr, "No Raft storage directory specified\n")
-		os.Exit(1)
+		log.Fatalln("No Raft storage directory specified")
 	}
-	os.MkdirAll(raftDir, 0700)
+	if err := os.MkdirAll(raftDir, 0700); err != nil {
+		log.Fatalf("failed to create path for Raft storage: %s", err.Error())
+	}
 
 	s := store.New(inmem)
 	s.RaftDir = raftDir
@@ -74,7 +79,7 @@ func main() {
 	}
 
 	// We're up and running!
-	log.Println("hraftd started successfully")
+	log.Printf("hraftd started successfully, listening on http://%s", httpAddr)
 
 	terminate := make(chan os.Signal, 1)
 	signal.Notify(terminate, os.Interrupt)
