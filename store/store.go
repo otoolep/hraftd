@@ -19,7 +19,7 @@ import (
 	"time"
 
 	"github.com/hashicorp/raft"
-	"github.com/hashicorp/raft-boltdb"
+	raftboltdb "github.com/hashicorp/raft-boltdb/v2"
 )
 
 const (
@@ -87,9 +87,11 @@ func (s *Store) Open(enableSingle bool, localID string) error {
 		logStore = raft.NewInmemStore()
 		stableStore = raft.NewInmemStore()
 	} else {
-		boltDB, err := raftboltdb.NewBoltStore(filepath.Join(s.RaftDir, "raft.db"))
+		boltDB, err := raftboltdb.New(raftboltdb.Options{
+			Path: filepath.Join(s.RaftDir, "raft.db"),
+		})
 		if err != nil {
-			return fmt.Errorf("new bolt store: %s", err)
+			return fmt.Errorf("new bbolt store: %s", err)
 		}
 		logStore = boltDB
 		stableStore = boltDB

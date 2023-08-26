@@ -4,7 +4,7 @@ go 1.20
 
 require (
 	github.com/hashicorp/raft v1.5.0
-	github.com/hashicorp/raft-boltdb v0.0.0-20230125174641-2a8082862702
+	github.com/hashicorp/raft-boltdb/v2 v2.2.2
 )
 
 require (
@@ -17,5 +17,6 @@ require (
 	github.com/hashicorp/golang-lru v1.0.2 // indirect
 	github.com/mattn/go-colorable v0.1.13 // indirect
 	github.com/mattn/go-isatty v0.0.19 // indirect
+	go.etcd.io/bbolt v1.3.5 // indirect
 	golang.org/x/sys v0.11.0 // indirect
 )
