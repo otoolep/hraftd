@@ -1,4 +1,4 @@
-_For background on this project check out this [blog post](http://www.philipotoole.com/building-a-distributed-key-value-store-using-raft/). Please note that this project has been archived, and is no longer maintained._
+_For background on this project check out this [blog post](http://www.philipotoole.com/building-a-distributed-key-value-store-using-raft/).
 
 hraftd
 ======
@@ -20,7 +20,7 @@ curl -XGET localhost:11000/key/foo
 ```
 
 ## Running hraftd
-*Building hraftd requires Go 1.16 or later. [gvm](https://github.com/moovweb/gvm) is a great tool for installing and managing your versions of Go.*
+*Building hraftd requires Go 1.20 or later. [gvm](https://github.com/moovweb/gvm) is a great tool for installing and managing your versions of Go.*
 
 Starting and running a hraftd cluster is easy. Download and build hraftd like so:
 ```bash
