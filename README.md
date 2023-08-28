@@ -6,7 +6,7 @@ hraftd
 [![Go Reference](https://pkg.go.dev/badge/github.com/otoolep/hraftd.svg)](https://pkg.go.dev/github.com/otoolep/hraftd)
 [![Go Report Card](https://goreportcard.com/badge/github.com/otoolep/hraftd)](https://goreportcard.com/report/github.com/otoolep/hraftd)
 
-hraftd is a reference example use of the [Hashicorp Raft implementation v1.0](https://github.com/hashicorp/raft). [Raft](https://raft.github.io/) is a _distributed consensus protocol_, meaning its purpose is to ensure that a set of nodes -- a cluster -- agree on the state of some arbitrary state machine, even when nodes are vulnerable to failure and network partitions. Distributed consensus is a fundamental concept when it comes to building fault-tolerant systems.
+hraftd is a reference example use of the [Hashicorp Raft implementation](https://github.com/hashicorp/raft). [Raft](https://raft.github.io/) is a _distributed consensus protocol_, meaning its purpose is to ensure that a set of nodes -- a cluster -- agree on the state of some arbitrary state machine, even when nodes are vulnerable to failure and network partitions. Distributed consensus is a fundamental concept when it comes to building fault-tolerant systems.
 
 A simple example system like hraftd makes it easy to study the Raft consensus protocol in general, and Hashicorp's Raft implementation in particular. It can be run on Linux, OSX, and Windows.
 
