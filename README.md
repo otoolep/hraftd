@@ -53,8 +53,8 @@ _A walkthrough of setting up a more realistic cluster is [here](https://github.c
 
 Let's bring up 2 more nodes, so we have a 3-node cluster. That way we can tolerate the failure of 1 node:
 ```bash
-$GOPATH/bin/hraftd -id node1 -haddr :11001 -raddr :12001 -join :11000 ~/node1
-$GOPATH/bin/hraftd -id node2 -haddr :11002 -raddr :12002 -join :11000 ~/node2
+$GOPATH/bin/hraftd -id node1 -haddr localhost:11001 -raddr localhost:12001 -join :11000 ~/node1
+$GOPATH/bin/hraftd -id node2 -haddr localhost:11002 -raddr localhost:12002 -join :11000 ~/node2
 ```
 _This example shows each hraftd node running on the same host, so each node must listen on different ports. This would not be necessary if each node ran on a different host._
 
