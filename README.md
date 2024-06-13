@@ -1,4 +1,5 @@
-_For background on this project check out this [blog post](http://www.philipotoole.com/building-a-distributed-key-value-store-using-raft/)._
+_For background on this project check out this [blog post](http://www.philipotoole.com/building-a-distributed-key-value-store-using-raft/). You should also check out the GopherCon2023 talk [Build Your Own Distributed System Using Go](https://www.youtube.com/watch?v=8XbxQ1Epi5w), which explains step-by-step how to use the Hashicorp Raft library._
+
 
 hraftd
 ======
