@@ -3,11 +3,12 @@ jobs:
   build:
     working_directory: ~/hraftd/src/github.com/otoolep/hraftd
     docker:
-      - image: cimg/go:1.21.0
+      - image: cimg/go:1.22.0
     resource_class: large
 
     steps:
         - checkout
+        - run: go version
         - run: go vet .
         - run: go get -t -d -v ./...
         - run: go test -timeout 60s -v ./...
