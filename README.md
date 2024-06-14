@@ -4,6 +4,7 @@ _For background on this project check out this [blog post](http://www.philipotoo
 hraftd
 ======
 [![Circle CI](https://circleci.com/gh/otoolep/hraftd/tree/master.svg?style=svg)](https://circleci.com/gh/otoolep/hraftd/tree/master)
+[![AppVeyor](https://ci.appveyor.com/api/projects/status/github/otoolep/hraftd?branch=master&svg=true)](https://ci.appveyor.com/project/otoolep/hraftd)
 [![Go Reference](https://pkg.go.dev/badge/github.com/otoolep/hraftd.svg)](https://pkg.go.dev/github.com/otoolep/hraftd)
 [![Go Report Card](https://goreportcard.com/badge/github.com/otoolep/hraftd)](https://goreportcard.com/report/github.com/otoolep/hraftd)
 
