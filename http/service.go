@@ -165,7 +165,6 @@ func (s *Service) handleKeyRequest(w http.ResponseWriter, r *http.Request) {
 			w.WriteHeader(http.StatusInternalServerError)
 			return
 		}
-		s.store.Delete(k)
 
 	default:
 		w.WriteHeader(http.StatusMethodNotAllowed)
