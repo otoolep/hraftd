@@ -202,6 +202,55 @@ func (s *Store) Join(nodeID, addr string) error {
 	return nil
 }
 
+type Node struct {
+	ID      string `json:"id"`
+	Address string `json:"address"`
+}
+
+type StoreStatus struct {
+	Me        Node   `json:"me"`
+	Leader    Node   `json:"leader"`
+	Followers []Node `json:"follower"`
+}
+
+// Raft status
+func (s *Store) Status() ([]byte, error) {
+	var leaderServerAddr, leaderId = s.raft.LeaderWithID()
+	var leader = Node{
+		ID:      string(leaderId),
+		Address: string(leaderServerAddr),
+	}
+
+	var servers = s.raft.GetConfiguration().Configuration().Servers
+	var followers []Node = []Node{}
+	var me Node = Node{
+		Address: s.RaftBind,
+	}
+	for _, server := range servers {
+		if server.ID != leaderId {
+			followers = append(followers, Node{
+				ID:      string(server.ID),
+				Address: string(server.Address),
+			})
+		}
+
+		if string(server.Address) == s.RaftBind {
+			me = Node{
+				ID:      string(server.ID),
+				Address: string(server.Address),
+			}
+		}
+	}
+
+	var status = StoreStatus{
+		Me:        me,
+		Leader:    leader,
+		Followers: followers,
+	}
+
+	return json.Marshal(status)
+}
+
 type fsm Store
 
 // Apply applies a Raft log entry to the key-value store.
