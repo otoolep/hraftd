@@ -119,7 +119,11 @@ func (s *Service) handleJoin(w http.ResponseWriter, r *http.Request) {
 }
 
 func (s *Service) handleStatus(w http.ResponseWriter, r *http.Request) {
-	var status, err = s.store.Status()
+	if r.Method != "GET" {
+		w.WriteHeader(http.StatusMethodNotAllowed)
+	}
+
+	status, err := s.store.Status()
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
