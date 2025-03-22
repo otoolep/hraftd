@@ -86,6 +86,10 @@ func (t *testStore) Join(nodeID, addr string) error {
 	return nil
 }
 
+func (t *testStore) Status() ([]byte, error) {
+	return nil, nil
+}
+
 func doGet(t *testing.T, url, key string) string {
 	resp, err := http.Get(fmt.Sprintf("%s/key/%s", url, key))
 	if err != nil {
