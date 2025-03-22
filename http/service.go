@@ -11,6 +11,17 @@ import (
 	"strings"
 )
 
+type Node struct {
+	ID      string `json:"id"`
+	Address string `json:"address"`
+}
+
+type StoreStatus struct {
+	Me        Node   `json:"me"`
+	Leader    Node   `json:"leader"`
+	Followers []Node `json:"followers"`
+}
+
 // Store is the interface Raft-backed key-value stores must implement.
 type Store interface {
 	// Get returns the value for the given key.
@@ -26,7 +37,7 @@ type Store interface {
 	Join(nodeID string, addr string) error
 
 	// Show who is me, the leader, and followers
-	Status() ([]byte, error)
+	Status() (StoreStatus, error)
 }
 
 // Service provides HTTP service.
@@ -131,8 +142,15 @@ func (s *Service) handleStatus(w http.ResponseWriter, r *http.Request) {
 	// Set the Content-Type header to application/json
 	w.Header().Set("Content-Type", "application/json")
 
-	// Encode the response struct to JSON and write it to the response writer
-	_, err = w.Write(status)
+	// Encode the response struct to JSON
+	statusJson, err := json.Marshal(status)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	// write it to the response writer
+	_, err = w.Write(statusJson)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return

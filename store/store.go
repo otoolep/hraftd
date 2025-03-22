@@ -20,6 +20,7 @@ import (
 
 	"github.com/hashicorp/raft"
 	raftboltdb "github.com/hashicorp/raft-boltdb/v2"
+	httpd "github.com/otoolep/hraftd/http"
 )
 
 const (
@@ -202,53 +203,42 @@ func (s *Store) Join(nodeID, addr string) error {
 	return nil
 }
 
-type Node struct {
-	ID      string `json:"id"`
-	Address string `json:"address"`
-}
-
-type StoreStatus struct {
-	Me        Node   `json:"me"`
-	Leader    Node   `json:"leader"`
-	Followers []Node `json:"follower"`
-}
-
 // Raft status
-func (s *Store) Status() ([]byte, error) {
-	var leaderServerAddr, leaderId = s.raft.LeaderWithID()
-	var leader = Node{
+func (s *Store) Status() (httpd.StoreStatus, error) {
+	leaderServerAddr, leaderId := s.raft.LeaderWithID()
+	leader := httpd.Node{
 		ID:      string(leaderId),
 		Address: string(leaderServerAddr),
 	}
 
-	var servers = s.raft.GetConfiguration().Configuration().Servers
-	var followers []Node = []Node{}
-	var me Node = Node{
+	servers := s.raft.GetConfiguration().Configuration().Servers
+	followers := []httpd.Node{}
+	me := httpd.Node{
 		Address: s.RaftBind,
 	}
 	for _, server := range servers {
 		if server.ID != leaderId {
-			followers = append(followers, Node{
+			followers = append(followers, httpd.Node{
 				ID:      string(server.ID),
 				Address: string(server.Address),
 			})
 		}
 
 		if string(server.Address) == s.RaftBind {
-			me = Node{
+			me = httpd.Node{
 				ID:      string(server.ID),
 				Address: string(server.Address),
 			}
 		}
 	}
 
-	var status = StoreStatus{
+	status := httpd.StoreStatus{
 		Me:        me,
 		Leader:    leader,
 		Followers: followers,
 	}
 
-	return json.Marshal(status)
+	return status, nil
 }
 
 type fsm Store
