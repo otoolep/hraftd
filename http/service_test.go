@@ -9,6 +9,8 @@ import (
 	"net/url"
 	"strings"
 	"testing"
+
+	store "github.com/otoolep/hraftd/store"
 )
 
 // Test_NewServer tests that a server can perform all basic operations.
@@ -87,17 +89,17 @@ func (t *testStore) Join(nodeID, addr string) error {
 	return nil
 }
 
-func (t *testStore) Status() (StoreStatus, error) {
-	return StoreStatus{
-		Me: Node{
+func (t *testStore) Status() (store.StoreStatus, error) {
+	return store.StoreStatus{
+		Me: store.Node{
 			ID:      "01",
 			Address: "127.0.0.1:1210",
 		},
-		Leader: Node{
+		Leader: store.Node{
 			ID:      "01",
 			Address: "127.0.0.1:1210",
 		},
-		Followers: []Node{},
+		Followers: []store.Node{},
 	}, nil
 }
 
@@ -155,7 +157,7 @@ func doStatus(t *testing.T, url string) {
 		t.Fatalf("failed to read response: %s", err)
 	}
 
-	var status StoreStatus
+	var status store.StoreStatus
 	err = json.Unmarshal(body, &status)
 	if err != nil {
 		t.Fatalf("status is not a valid status json")

@@ -20,7 +20,6 @@ import (
 
 	"github.com/hashicorp/raft"
 	raftboltdb "github.com/hashicorp/raft-boltdb/v2"
-	httpd "github.com/otoolep/hraftd/http"
 )
 
 const (
@@ -32,6 +31,17 @@ type command struct {
 	Op    string `json:"op,omitempty"`
 	Key   string `json:"key,omitempty"`
 	Value string `json:"value,omitempty"`
+}
+
+type Node struct {
+	ID      string `json:"id"`
+	Address string `json:"address"`
+}
+
+type StoreStatus struct {
+	Me        Node   `json:"me"`
+	Leader    Node   `json:"leader"`
+	Followers []Node `json:"followers"`
 }
 
 // Store is a simple key-value store, where all changes are made via Raft consensus.
@@ -204,35 +214,35 @@ func (s *Store) Join(nodeID, addr string) error {
 }
 
 // Raft status
-func (s *Store) Status() (httpd.StoreStatus, error) {
+func (s *Store) Status() (StoreStatus, error) {
 	leaderServerAddr, leaderId := s.raft.LeaderWithID()
-	leader := httpd.Node{
+	leader := Node{
 		ID:      string(leaderId),
 		Address: string(leaderServerAddr),
 	}
 
 	servers := s.raft.GetConfiguration().Configuration().Servers
-	followers := []httpd.Node{}
-	me := httpd.Node{
+	followers := []Node{}
+	me := Node{
 		Address: s.RaftBind,
 	}
 	for _, server := range servers {
 		if server.ID != leaderId {
-			followers = append(followers, httpd.Node{
+			followers = append(followers, Node{
 				ID:      string(server.ID),
 				Address: string(server.Address),
 			})
 		}
 
 		if string(server.Address) == s.RaftBind {
-			me = httpd.Node{
+			me = Node{
 				ID:      string(server.ID),
 				Address: string(server.Address),
 			}
 		}
 	}
 
-	status := httpd.StoreStatus{
+	status := StoreStatus{
 		Me:        me,
 		Leader:    leader,
 		Followers: followers,

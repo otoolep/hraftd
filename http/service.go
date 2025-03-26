@@ -9,18 +9,9 @@ import (
 	"net"
 	"net/http"
 	"strings"
+
+	store "github.com/otoolep/hraftd/store"
 )
-
-type Node struct {
-	ID      string `json:"id"`
-	Address string `json:"address"`
-}
-
-type StoreStatus struct {
-	Me        Node   `json:"me"`
-	Leader    Node   `json:"leader"`
-	Followers []Node `json:"followers"`
-}
 
 // Store is the interface Raft-backed key-value stores must implement.
 type Store interface {
@@ -37,7 +28,7 @@ type Store interface {
 	Join(nodeID string, addr string) error
 
 	// Show who is me, the leader, and followers
-	Status() (StoreStatus, error)
+	Status() (store.StoreStatus, error)
 }
 
 // Service provides HTTP service.
