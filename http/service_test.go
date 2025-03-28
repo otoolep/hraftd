@@ -9,6 +9,8 @@ import (
 	"net/url"
 	"strings"
 	"testing"
+
+	store "github.com/otoolep/hraftd/store"
 )
 
 // Test_NewServer tests that a server can perform all basic operations.
@@ -47,6 +49,7 @@ func Test_NewServer(t *testing.T) {
 		t.Fatalf(`wrong value received for key k2: %s (expected empty string)`, string(b))
 	}
 
+	doStatus(t, s.URL())
 }
 
 type testServer struct {
@@ -84,6 +87,20 @@ func (t *testStore) Delete(key string) error {
 
 func (t *testStore) Join(nodeID, addr string) error {
 	return nil
+}
+
+func (t *testStore) Status() (store.StoreStatus, error) {
+	return store.StoreStatus{
+		Me: store.Node{
+			ID:      "01",
+			Address: "127.0.0.1:1210",
+		},
+		Leader: store.Node{
+			ID:      "01",
+			Address: "127.0.0.1:1210",
+		},
+		Followers: []store.Node{},
+	}, nil
 }
 
 func doGet(t *testing.T, url, key string) string {
@@ -127,4 +144,22 @@ func doDelete(t *testing.T, u, key string) {
 		t.Fatalf("failed to GET key: %s", err)
 	}
 	defer resp.Body.Close()
+}
+
+func doStatus(t *testing.T, url string) {
+	resp, err := http.Get(fmt.Sprintf("%s/status", url))
+	if err != nil {
+		t.Fatalf("failed to fetch status: %s", err)
+	}
+	defer resp.Body.Close()
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		t.Fatalf("failed to read response: %s", err)
+	}
+
+	var status store.StoreStatus
+	err = json.Unmarshal(body, &status)
+	if err != nil {
+		t.Fatalf("status is not a valid status json")
+	}
 }

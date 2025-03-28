@@ -33,6 +33,17 @@ type command struct {
 	Value string `json:"value,omitempty"`
 }
 
+type Node struct {
+	ID      string `json:"id"`
+	Address string `json:"address"`
+}
+
+type StoreStatus struct {
+	Me        Node   `json:"me"`
+	Leader    Node   `json:"leader"`
+	Followers []Node `json:"followers"`
+}
+
 // Store is a simple key-value store, where all changes are made via Raft consensus.
 type Store struct {
 	RaftDir  string
@@ -200,6 +211,44 @@ func (s *Store) Join(nodeID, addr string) error {
 	}
 	s.logger.Printf("node %s at %s joined successfully", nodeID, addr)
 	return nil
+}
+
+// Raft status
+func (s *Store) Status() (StoreStatus, error) {
+	leaderServerAddr, leaderId := s.raft.LeaderWithID()
+	leader := Node{
+		ID:      string(leaderId),
+		Address: string(leaderServerAddr),
+	}
+
+	servers := s.raft.GetConfiguration().Configuration().Servers
+	followers := []Node{}
+	me := Node{
+		Address: s.RaftBind,
+	}
+	for _, server := range servers {
+		if server.ID != leaderId {
+			followers = append(followers, Node{
+				ID:      string(server.ID),
+				Address: string(server.Address),
+			})
+		}
+
+		if string(server.Address) == s.RaftBind {
+			me = Node{
+				ID:      string(server.ID),
+				Address: string(server.Address),
+			}
+		}
+	}
+
+	status := StoreStatus{
+		Me:        me,
+		Leader:    leader,
+		Followers: followers,
+	}
+
+	return status, nil
 }
 
 type fsm Store
