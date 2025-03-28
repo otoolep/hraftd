@@ -33,11 +33,13 @@ type command struct {
 	Value string `json:"value,omitempty"`
 }
 
+// Node represents a node in the cluster.
 type Node struct {
 	ID      string `json:"id"`
 	Address string `json:"address"`
 }
 
+// StoreStatus is the Status a Store returns.
 type StoreStatus struct {
 	Me        Node   `json:"me"`
 	Leader    Node   `json:"leader"`
@@ -213,7 +215,7 @@ func (s *Store) Join(nodeID, addr string) error {
 	return nil
 }
 
-// Raft status
+// Status returns information about the Store.
 func (s *Store) Status() (StoreStatus, error) {
 	leaderServerAddr, leaderId := s.raft.LeaderWithID()
 	leader := Node{
